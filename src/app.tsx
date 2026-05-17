@@ -1,0 +1,181 @@
+import { lazy, Suspense } from 'react';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import { DefaultBabylonPreloader, babylonLogo } from './babylon/custom/loading';
+import reactLogo from './assets/react.svg'
+import viteLogo from './assets/vite.svg'
+import heroImg from './assets/hero.png'
+import './app.css'
+
+// Note: All babylon imports stay inside the PlayRoute lazy load chunk
+const PlayRoute = lazy(() => import('./routing/router'));
+
+function Home() {
+  const navigate = useNavigate();
+  const handlePlayerDemo = () => {
+    /* Use Native Navigation API to prevent ANY BABYLON CODE from being included in the main bundle.
+     * This ensures that Babylon and all related dependencies are only loaded when the user clicks "Player Demo", optimizing initial load performance.
+     * Game code should use game manager, for example:
+     * GameManager.NavigateTo("/play", {
+     *     gameMode: "PlayerControllerDemo",
+     *     sceneUrl: GameManager.PlaygroundRepo + "samplescene.gltf",
+     * });
+     */
+    navigate('/play', {
+      state: {
+        fromApp: true,
+        gameMode: 'PlayerControllerDemo',
+        sceneUrl: 'https://dlyp4oy8lme1v.cloudfront.net/playground/samplescene.gltf'
+      },
+    });
+  };
+  const handleVehicleDemo = () => {
+    /* Use Native Navigation API to prevent ANY BABYLON CODE from being included in the main bundle.
+     * This ensures that Babylon and all related dependencies are only loaded when the user clicks "Vehicle Demo", optimizing initial load performance.
+     * Game code should use game manager, for example:
+     * GameManager.NavigateTo("/play", {
+     *     gameMode: "VehicleControllerDemo",
+     *     sceneUrl: GameManager.PlaygroundRepo + "openterrain.gltf",
+     * });
+     */
+    navigate('/play', {
+      state: {
+        fromApp: true,
+        gameMode: 'VehicleControllerDemo',
+        sceneUrl: 'https://dlyp4oy8lme1v.cloudfront.net/playground/openterrain.gltf'
+      },
+    });
+  };
+
+  return (
+    <div id="vite">
+      <section id="center">
+        <div className="hero">
+          <img src={heroImg} className="base" width="170" height="179" alt="" />
+          <img src={reactLogo} className="framework" alt="React logo" />
+          <img src={viteLogo} className="vite" alt="Vite logo" />
+          <div>
+            <a href="https://babylonjs.com" target="_blank">
+              <img src={babylonLogo} className="logo babylon" alt="Babylon logo" />
+            </a>
+          </div>
+        </div>
+        <div>
+          <h1>React + Vite + BabylonJS</h1>
+        </div>
+          <button type="button" className="counter" onClick={handlePlayerDemo}>Player Demo</button>&nbsp;&nbsp;<button type="button" className="counter" onClick={handleVehicleDemo}>Vehicle Demo</button>
+      </section>
+
+      <div className="ticks"></div>
+
+      <section id="next-steps">
+        <div id="docs">
+          <svg className="icon" role="presentation" aria-hidden="true">
+            <use href="/icons.svg#documentation-icon"></use>
+          </svg>
+          <h2>Documentation</h2>
+          <p>Your questions, answered</p>
+          <ul>
+            <li>
+              <a href="https://github.com/babylonjs/babylontoolkit/blob/master/agent/references/react-framework.md" target="_blank">
+                <img className="logo" src={babylonLogo} alt="" />
+                Babylon Toolkit
+              </a>
+            </li>
+            <li>
+              <a href="https://vite.dev/" target="_blank">
+                <img className="logo" src={viteLogo} alt="" />
+                Explore Vite
+              </a>
+            </li>
+            <li>
+              <a href="https://react.dev/" target="_blank">
+                <img className="button-icon" src={reactLogo} alt="" />
+                Learn More
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div id="social">
+          <svg className="icon" role="presentation" aria-hidden="true">
+            <use href="/icons.svg#social-icon"></use>
+          </svg>
+          <h2>Connect with us</h2>
+          <p>Join the Vite community</p>
+          <ul>
+            <li>
+              <a href="https://github.com/vitejs/vite" target="_blank">
+                <svg
+                  className="button-icon"
+                  role="presentation"
+                  aria-hidden="true"
+                >
+                  <use href="/icons.svg#github-icon"></use>
+                </svg>
+                GitHub
+              </a>
+            </li>
+            <li>
+              <a href="https://chat.vite.dev/" target="_blank">
+                <svg
+                  className="button-icon"
+                  role="presentation"
+                  aria-hidden="true"
+                >
+                  <use href="/icons.svg#discord-icon"></use>
+                </svg>
+                Discord
+              </a>
+            </li>
+            <li>
+              <a href="https://x.com/vite_js" target="_blank">
+                <svg
+                  className="button-icon"
+                  role="presentation"
+                  aria-hidden="true"
+                >
+                  <use href="/icons.svg#x-icon"></use>
+                </svg>
+                X.com
+              </a>
+            </li>
+            <li>
+              <a href="https://bsky.app/profile/vite.dev" target="_blank">
+                <svg
+                  className="button-icon"
+                  role="presentation"
+                  aria-hidden="true"
+                >
+                  <use href="/icons.svg#bluesky-icon"></use>
+                </svg>
+                Bluesky
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <div className="ticks"></div>
+      <section id="spacer"></section>
+      <div>
+        <small><a href="https://www.babylontoolkit.com" target="_blank">Babylon Toolkit Game Development</a></small>
+      </div>
+    </div>
+  )
+}
+
+function App() {
+  return (
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/play" element={
+          <Suspense fallback={<DefaultBabylonPreloader />}>
+            <PlayRoute />
+          </Suspense>
+        } />
+      </Routes>
+    </BrowserRouter>
+  )
+}
+
+export default App
