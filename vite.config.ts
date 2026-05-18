@@ -56,8 +56,11 @@ export default defineConfig(({ mode }) => ({
       allow: [".."]
     },
     middlewareMode: false,
+    allowedHosts: true,    // allow the .replit.dev domain through without whitelisting it
+    strictPort: true,      // fail loudly if the port is taken — never silently fall back
+    host: "0.0.0.0",       // bind all interfaces — required for the Replit proxy to reach it
+    port: parseInt(process.env.PORT || "5173"),  // read PORT from the workflow env var
     open: true, // Automatically open the browser
-    port: parseInt(process.env.PORT ?? "8080"), // Default port for the development server
   },
   plugins: [
     react(),
