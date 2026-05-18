@@ -2,7 +2,16 @@
   "compilerOptions": {
     "target": "ES2022",
     "lib": ["ES2023"],
-    "types": ["node", "vite/client"],
+    "types": [
+      "node",
+      "vite/client",
+      "babylonjs",
+      "babylonjs-gui",
+      "babylonjs-loaders",
+      "babylonjs-gltf2interface",
+      "babylonjs-materials",
+      "babylonjs-toolkit"
+    ],
     "module": "ESNext",
     "skipLibCheck": true,
     "noImplicitAny": false,

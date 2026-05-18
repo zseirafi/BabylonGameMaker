@@ -5,7 +5,7 @@ const readline = require("readline");
 const fs = require("fs");
 const path = require("path");
 
-const SUBMODULE_URL = "https://github.com/babylontoolkit/ReactFramework.git";
+const SUBMODULE_URL = "https://github.com/babylontoolkit/ClassicFramework.git";
 const SUBMODULE_PATH = "src/babylon";
 
 function ask(question) {
