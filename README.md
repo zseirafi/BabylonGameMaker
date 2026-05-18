@@ -70,8 +70,11 @@ The Vite bundle services behave differently in devmode than production. To prese
       "@babylonjs/loaders",
       "@babylonjs/addons",
       "@babylonjs/materials",
+      "@babylonjs/serializers",
       "@babylonjs-toolkit/dlc",
-      "@babylonjs-toolkit/next"
+      "@babylonjs-toolkit/next",
+      "scheduler",
+      "use-sync-external-store/shim"
     ] : [],
   },
   ```

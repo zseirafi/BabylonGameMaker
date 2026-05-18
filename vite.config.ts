@@ -42,8 +42,11 @@ export default defineConfig(({ mode }) => ({
       "@babylonjs/loaders",
       "@babylonjs/addons",
       "@babylonjs/materials",
+      "@babylonjs/serializers",
       "@babylonjs-toolkit/dlc",
-      "@babylonjs-toolkit/next"
+      "@babylonjs-toolkit/next",
+      "scheduler",
+      "use-sync-external-store/shim"
     ] : [],
   },
   server: {
