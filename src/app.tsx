@@ -25,8 +25,8 @@ function Home() {
       state: {
         fromApp: true,
         gameMode: 'PlayerControllerDemo',
-        sceneUrl: 'https://babylontoolkit.github.io/assets/playground/samplescene.gltf',
-        projectUrl: 'https://babylontoolkit.github.io/assets/playground/default.playground.js'
+        sceneUrl: 'https://repo.babylontoolkit.com/playground/samplescene.gltf',
+        projectUrl: 'https://repo.babylontoolkit.com/playground/default.playground.js'
       },
     });
   };
@@ -44,8 +44,8 @@ function Home() {
       state: {
         fromApp: true,
         gameMode: 'VehicleControllerDemo',
-        sceneUrl: 'https://babylontoolkit.github.io/assets/playground/openterrain.gltf',
-        projectUrl: 'https://babylontoolkit.github.io/assets/playground/default.playground.js'
+        sceneUrl: 'https://repo.babylontoolkit.com/playground/openterrain.gltf',
+        projectUrl: 'https://repo.babylontoolkit.com/playground/default.playground.js'
       },
     });
   };
