@@ -1,3 +1,3 @@
 [submodule "src/babylon"]
 	path = src/babylon
-	url = https://github.com/babylontoolkit/ClassicFramework.git
+	url = https://github.com/babylontoolkit/ReactFramework.git
