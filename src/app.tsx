@@ -82,7 +82,7 @@ function Home() {
           <p>Your questions, answered</p>
           <ul>
             <li>
-              <a href="https://github.com/babylontoolkit/agent/blob/main/references/react-framework.md" target="_blank">
+              <a href="https://babylontoolkit.github.io/agent/references/react-framework.md" target="_blank">
                 <img className="logo" src={babylonLogo} alt="" />
                 Babylon Toolkit
               </a>
