@@ -2,6 +2,73 @@ import type { Connect } from "vite";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
+// MIME type map for all common web game / media asset extensions.
+// Strips query strings before matching so ?v=123 cache-busters don't break lookups.
+const MEDIA_MIME_TYPES: Record<string, string> = {
+  // 3D models
+  ".gltf":   "model/gltf+json",
+  ".glb":    "model/gltf-binary",
+  ".bin":    "application/octet-stream",
+  // Images — raster
+  ".png":    "image/png",
+  ".jpg":    "image/jpeg",
+  ".jpeg":   "image/jpeg",
+  ".webp":   "image/webp",
+  ".gif":    "image/gif",
+  ".bmp":    "image/bmp",
+  ".tiff":   "image/tiff",
+  ".tif":    "image/tiff",
+  ".avif":   "image/avif",
+  ".ico":    "image/x-icon",
+  ".svg":    "image/svg+xml",
+  // Images — HDR / compressed textures (Babylon)
+  ".hdr":    "application/octet-stream",
+  ".exr":    "application/octet-stream",
+  ".ktx":    "image/ktx",
+  ".ktx2":   "image/ktx2",
+  ".basis":  "application/octet-stream",
+  ".dds":    "application/octet-stream",
+  // Audio
+  ".mp3":    "audio/mpeg",
+  ".ogg":    "audio/ogg",
+  ".wav":    "audio/wav",
+  ".aac":    "audio/aac",
+  ".flac":   "audio/flac",
+  ".m4a":    "audio/mp4",
+  ".opus":   "audio/opus",
+  ".weba":   "audio/webm",
+  // Video
+  ".mp4":    "video/mp4",
+  ".m4v":    "video/mp4",
+  ".webm":   "video/webm",
+  ".ogv":    "video/ogg",
+  ".mov":    "video/quicktime",
+  ".avi":    "video/x-msvideo",
+};
+
+// Extensions that also need CORS + method headers (3D model fetches from BabylonJS loaders)
+const CORS_FULL_EXTS = new Set([".gltf", ".glb"]);
+
+function applyMediaContentType(req: Connect.IncomingMessage, res: { setHeader: (k: string, v: string) => void }) {
+  if (!req.originalUrl) return;
+  const path = req.originalUrl.split("?")[0].toLowerCase();
+  // Handle double-extension gzip variants e.g. scene.gz.gltf
+  const normalized = path.endsWith(".gz.gltf") ? ".gltf"
+    : path.endsWith(".gz.glb") ? ".glb"
+    : path.endsWith(".gz.bin") ? ".bin"
+    : "";
+  const ext = normalized || path.substring(path.lastIndexOf("."));
+  const mime = MEDIA_MIME_TYPES[ext];
+  if (mime) {
+    res.setHeader("Content-Type", mime);
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    if (CORS_FULL_EXTS.has(ext)) {
+      res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    }
+  }
+}
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   base: "/", // Ensures assets are correctly referenced
@@ -109,46 +176,16 @@ export default defineConfig(({ mode }) => ({
       }
     },
     {
-      name: "gltf-content-type-plugin",
+      name: "media-content-type-plugin",
       configureServer(server) {
         server.middlewares.use((req: Connect.IncomingMessage, res, next) => {
-          if (req.originalUrl) {
-            if (req.originalUrl.endsWith(".gltf") || req.originalUrl.endsWith(".gz.gltf")) {
-              res.setHeader("Content-Type", "model/gltf+json");
-              res.setHeader("Access-Control-Allow-Origin", "*");
-              res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-              res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-            } else if (req.originalUrl.endsWith(".glb") || req.originalUrl.endsWith(".gz.glb")) {
-              res.setHeader("Content-Type", "model/gltf-binary");
-              res.setHeader("Access-Control-Allow-Origin", "*");
-              res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-              res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-            } else if (req.originalUrl.endsWith(".bin") || req.originalUrl.endsWith(".gz.bin")) {
-              res.setHeader("Content-Type", "application/octet-stream");
-              res.setHeader("Access-Control-Allow-Origin", "*");
-            }
-          }
+          applyMediaContentType(req, res);
           next();
         });
       },
       configurePreviewServer(server) {
         server.middlewares.use((req: Connect.IncomingMessage, res, next) => {
-          if (req.originalUrl) {
-            if (req.originalUrl.endsWith(".gltf") || req.originalUrl.endsWith(".gz.gltf")) {
-              res.setHeader("Content-Type", "model/gltf+json");
-              res.setHeader("Access-Control-Allow-Origin", "*");
-              res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-              res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-            } else if (req.originalUrl.endsWith(".glb") || req.originalUrl.endsWith(".gz.glb")) {
-              res.setHeader("Content-Type", "model/gltf-binary");
-              res.setHeader("Access-Control-Allow-Origin", "*");
-              res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-              res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-            } else if (req.originalUrl.endsWith(".bin") || req.originalUrl.endsWith(".gz.bin")) {
-              res.setHeader("Content-Type", "application/octet-stream");
-              res.setHeader("Access-Control-Allow-Origin", "*");
-            }
-          }
+          applyMediaContentType(req, res);
           next();
         });
       }
