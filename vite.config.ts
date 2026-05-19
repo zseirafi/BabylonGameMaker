@@ -8,31 +8,25 @@ export default defineConfig(({ mode }) => ({
   build: {
     emptyOutDir: true,
     copyPublicDir: true,
-    minify: "esbuild",
+    minify: "oxc",
     target: "esnext",
     sourcemap: false,
     rollupOptions: {
       output: {
         entryFileNames: "[name].js",
         assetFileNames: "[name].[ext]",
-        inlineDynamicImports: false,
         manualChunks(id) {
-          // IMPORTANT: Keep all Babylon code in one chunk to ensure the library files are correctly referenced 
+          // Inspector is a dev-only tool loaded conditionally — keep it as its own lazy chunk
+          if (id.includes("@babylonjs/inspector")) return "inspector";
+          // Havok is a large WASM package loaded conditionally — keep it as its own lazy chunk
+          if (id.includes("@babylonjs/havok")) return undefined;
+          // IMPORTANT: Keep all other Babylon code in one chunk to ensure library files are correctly referenced 
           if (id.includes("@babylonjs") || id.includes("@babylonjs-toolkit")) {
             return "babylon";
           }
         },
       }
     }
-  },
-  esbuild: {
-    supported: {
-        "top-level-await": true // Browsers can handle top-level-await features
-    },
-    treeShaking: mode === 'production',
-    minifySyntax: mode === 'production', 
-    minifyIdentifiers: mode === 'production',
-    minifyWhitespace: mode === 'production',
   },
   optimizeDeps: {
     exclude: ["@babylonjs/havok", "@babylonjs/inspector"],

@@ -17,14 +17,14 @@ function Home() {
      * Game code should use game manager, for example:
      * GameManager.NavigateTo("/play", {
      *     gameMode: "PlayerControllerDemo",
-     *     sceneUrl: GameManager.PlaygroundRepo + "samplescene.gltf",
+     *     sceneUrl: GameManager.PlaygroundRepo + "samplescene.gltf"
      * });
      */
     navigate('/play', {
       state: {
         fromApp: true,
         gameMode: 'PlayerControllerDemo',
-        sceneUrl: 'https://dlyp4oy8lme1v.cloudfront.net/playground/samplescene.gltf'
+        sceneUrl: 'https://babylontoolkit.github.io/assets/playground/samplescene.gltf'
       },
     });
   };
@@ -34,14 +34,14 @@ function Home() {
      * Game code should use game manager, for example:
      * GameManager.NavigateTo("/play", {
      *     gameMode: "VehicleControllerDemo",
-     *     sceneUrl: GameManager.PlaygroundRepo + "openterrain.gltf",
+     *     sceneUrl: GameManager.PlaygroundRepo + "openterrain.gltf"
      * });
      */
     navigate('/play', {
       state: {
         fromApp: true,
         gameMode: 'VehicleControllerDemo',
-        sceneUrl: 'https://dlyp4oy8lme1v.cloudfront.net/playground/openterrain.gltf'
+        sceneUrl: 'https://babylontoolkit.github.io/assets/playground/openterrain.gltf'
       },
     });
   };
