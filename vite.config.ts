@@ -15,13 +15,10 @@ export default defineConfig(({ mode }) => ({
       output: {
         entryFileNames: "[name].js",
         assetFileNames: "[name].[ext]",
+        inlineDynamicImports: false,
         manualChunks(id) {
-          // Inspector is a dev-only tool loaded conditionally — keep it as its own lazy chunk
-          if (id.includes("@babylonjs/inspector")) return "inspector";
-          // Havok is a large WASM package loaded conditionally — keep it as its own lazy chunk
-          if (id.includes("@babylonjs/havok")) return undefined;
-          // IMPORTANT: Keep all other Babylon code in one chunk to ensure library files are correctly referenced 
-          if (id.includes("@babylonjs") || id.includes("@babylonjs-toolkit")) {
+          // IMPORTANT: Keep all Babylon code in one chunk to ensure the library files are correctly referenced 
+          if (id.includes("babylonjs")) {
             return "babylon";
           }
         },
@@ -29,18 +26,14 @@ export default defineConfig(({ mode }) => ({
     }
   },
   optimizeDeps: {
-    exclude: ["@babylonjs/havok", "@babylonjs/inspector"],
+    exclude: ["babylonjs-inspector"],
     include: mode === 'development' ? [
-      "@babylonjs/core",
-      "@babylonjs/gui",
-      "@babylonjs/loaders",
-      "@babylonjs/addons",
-      "@babylonjs/materials",
-      "@babylonjs/serializers",
-      "@babylonjs-toolkit/dlc",
-      "@babylonjs-toolkit/next",
-      "scheduler",
-      "use-sync-external-store/shim"
+      "babylonjs",
+      "babylonjs-gui",
+      "babylonjs-addons",
+      "babylonjs-loaders",
+      "babylonjs-materials",
+      "babylonjs-toolkit",
     ] : [],
   },
   server: {
@@ -158,6 +151,25 @@ export default defineConfig(({ mode }) => ({
           }
           next();
         });
+      }
+    },
+    {
+      // babylonjs-inspector's bundle references Babylon internals as 'package::BABYLON.*' module IDs.
+      // Rolldown cannot resolve these custom specifiers; we intercept them and return virtual modules
+      // that proxy the matching namespace from the global BABYLON object at runtime.
+      name: "resolve-babylon-inspector-internals",
+      resolveId(source: string) {
+        if (source.includes("::")) {
+          return `\0babylon-ns:${source}`;
+        }
+      },
+      load(id: string) {
+        if (id.startsWith("\0babylon-ns:")) {
+          const namespacePath = id.replace("\0babylon-ns:", "").split("::")[1];
+          // e.g. "BABYLON.Debug" → globalThis.BABYLON?.Debug
+          const access = namespacePath.split(".").join("?.");
+          return `module.exports = (typeof globalThis !== "undefined" ? globalThis : window).${access} ?? {};`;
+        }
       }
     }
   ]

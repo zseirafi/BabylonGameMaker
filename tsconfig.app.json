@@ -5,7 +5,14 @@
     "lib": ["ES2021", "DOM", "DOM.Iterable"],
     "types": [
       "node",
-      "vite/client"
+      "vite/client",
+      "babylonjs",
+      "babylonjs-gui",
+      "babylonjs-addons",
+      "babylonjs-loaders",
+      "babylonjs-gltf2interface",
+      "babylonjs-materials",
+      "babylonjs-toolkit"
     ],
     "module": "ESNext",
     "skipLibCheck": true,
