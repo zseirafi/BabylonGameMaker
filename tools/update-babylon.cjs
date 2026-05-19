@@ -5,7 +5,7 @@ const readline = require("readline");
 const fs = require("fs");
 const path = require("path");
 
-const SUBMODULE_URL = "https://github.com/babylontoolkit/ClassicFramework.git";
+const SUBMODULE_URL = "https://github.com/babylontoolkit/ReactFramework.git";
 const SUBMODULE_PATH = "src/babylon";
 
 function ask(question) {
@@ -54,7 +54,7 @@ function getGitCommonDir() {
 
 async function main() {
   const answer = await ask(
-    "Overwrite Babylon Toolkit submodule at src/babylon? [y/N] "
+    "Overwrite Babylon Toolkit React Framework submodule at src/babylon? [y/N] "
   );
 
   if (answer !== "y" && answer !== "yes") {
@@ -65,7 +65,7 @@ async function main() {
   const gitCommonDir = getGitCommonDir();
   const gitModulePath = path.join(gitCommonDir, "modules", "src", "babylon");
 
-  console.log("\nRemoving existing Babylon Toolkit submodule...\n");
+  console.log("\nRemoving existing Babylon Toolkit React Framework submodule...\n");
 
   // These cleanup steps intentionally continue even if any individual command fails.
   run("git", ["submodule", "deinit", "-f", SUBMODULE_PATH], true);
@@ -74,13 +74,13 @@ async function main() {
   fs.rmSync(gitModulePath, { recursive: true, force: true });
   fs.rmSync(SUBMODULE_PATH, { recursive: true, force: true });
 
-  console.log("\nInstalling clean Babylon Toolkit submodule...\n");
+  console.log("\nInstalling clean Babylon Toolkit React Framework submodule...\n");
 
   run("git", ["submodule", "add", SUBMODULE_URL, SUBMODULE_PATH]);
   run("git", ["add", ".gitmodules", SUBMODULE_PATH]);
-  run("git", ["commit", "-m", "Update Babylon Toolkit submodule"]);
+  run("git", ["commit", "-m", "Update Babylon Toolkit React Framework submodule"]);
 
-  console.log("\nBabylon Toolkit submodule updated.");
+  console.log("\nBabylon Toolkit React Framework submodule updated.");
 }
 
 main().catch((error) => {

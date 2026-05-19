@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "start-server": "npm run build && npm run preview",
-    "update-babylon": "node tools/update-classic.cjs"
+    "update-babylon": "node tools/update-babylon.cjs"
   },
   "dependencies": {
     "babylonjs": "^9.6.2",
