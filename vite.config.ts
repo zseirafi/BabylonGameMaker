@@ -117,6 +117,10 @@ export default defineConfig(({ mode }) => ({
     host: "0.0.0.0",       // bind all interfaces — required for the Replit proxy to reach it
     port: parseInt(process.env.PORT || "5173"),  // read PORT from the workflow env var
     open: true, // Automatically open the browser
+    // Pre-crawl the lazy Babylon chunk so Vite's dep optimizer discovers all babylonjs submodules at server startup.
+    warmup: {
+      clientFiles: ["./src/routing/router.tsx"],
+    },    
   },
   plugins: [
     react(),
