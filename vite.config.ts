@@ -94,14 +94,17 @@ export default defineConfig(({ mode }) => ({
   },
   optimizeDeps: {
     exclude: ["babylonjs-inspector"],
-    include: mode === 'development' ? [
+    // Force-prebundle every babylon package on server startup so Vite doesn't
+    // discover a new sub-dep mid-click and trigger a full-page reload that
+    // bounces the user back to "/".
+    include: [
       "babylonjs",
       "babylonjs-gui",
       "babylonjs-addons",
       "babylonjs-loaders",
       "babylonjs-materials",
       "babylonjs-toolkit",
-    ] : [],
+    ],
   },
   server: {
     headers: {
@@ -117,11 +120,19 @@ export default defineConfig(({ mode }) => ({
     host: "0.0.0.0",       // bind all interfaces — required for the Replit proxy to reach it
     port: parseInt(process.env.PORT || "5173"),  // read PORT from the workflow env var
     open: true, // Automatically open the browser
-    // Pre-crawl the lazy Babylon chunk so Vite's dep optimizer discovers all babylonjs submodules at server startup.
+    // Pre-transform the entire babylon entry chain so the first /play click
+    // doesn't have to crawl + optimize a half-dozen UMD packages mid-navigation.
+    // Globs auto-pick up any new files you add under src/babylon/.
     warmup: {
-      clientFiles: ["./src/routing/router.tsx"],
-    },    
+      clientFiles: [
+        "./src/routing/router.tsx",
+        "./src/babylon/**/*.{ts,tsx}",
+        "./src/scripts/**/*.{ts,tsx}",
+      ],
+    },
+
   },
+
   plugins: [
     react(),
     {
