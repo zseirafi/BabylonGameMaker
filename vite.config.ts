@@ -92,6 +92,17 @@ export default defineConfig(({ mode }) => ({
       }
     }
   },
+  resolve: {
+    dedupe: [
+      "@babylonjs/core",
+      "@babylonjs/loaders",
+      "@babylonjs/gui",
+      "@babylonjs/materials",
+      "@babylonjs/serializers",
+      "@babylonjs/addons",
+      "@babylonjs/havok",
+    ],
+  },
   optimizeDeps: {
     exclude: [
       "@babylonjs/core",
