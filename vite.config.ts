@@ -92,10 +92,8 @@ export default defineConfig(({ mode }) => ({
       }
     }
   },
-  resolve: {
-    // Required: prevents dual-instance hazard from file: linked packages
-    // (ESM/node_modules/@babylonjs vs ESM-APP/node_modules/@babylonjs)
-    dedupe: [
+  optimizeDeps: {
+    exclude: [
       "@babylonjs/core",
       "@babylonjs/loaders",
       "@babylonjs/gui",
@@ -103,17 +101,11 @@ export default defineConfig(({ mode }) => ({
       "@babylonjs/serializers",
       "@babylonjs/addons",
       "@babylonjs/havok",
+      "@babylonjs/inspector",
+      "@babylonjs-toolkit/next",
+      "@babylonjs-toolkit/next/project",
     ],
-  },
-  optimizeDeps: {
-    exclude: ["@babylonjs/havok", "@babylonjs/inspector", "@babylonjs-toolkit/next", "@babylonjs-toolkit/next/project"],
     include: mode === 'development' ? [
-      "@babylonjs/core",
-      "@babylonjs/gui",
-      "@babylonjs/loaders",
-      "@babylonjs/addons",
-      "@babylonjs/materials",
-      "@babylonjs/serializers",
       "scheduler",
       "use-sync-external-store/shim"
     ] : [],
