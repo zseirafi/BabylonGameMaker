@@ -6,8 +6,8 @@ lazy-loaded behind `React.lazy` in `src/app.tsx`. No extra work is required.
 If you want to drop the Toolkit into an SSR framework (Next.js App Router,
 TanStack Start, Remix), use the **`src/babylon/mount.tsx`** wrapper instead
 of importing `system/babylon` directly. It defers every Babylon import
-behind `React.lazy`, so the UMD globals (`BABYLON`, `TOOLKIT`) and the
-Havok WASM are only touched on the client after mount.
+behind `React.lazy`, so the ES6 modules (`@babylonjs/core`, `@babylonjs-toolkit/next`,
+etc.) and the Havok WASM are only evaluated on the client after mount.
 
 ### Next.js (App Router)
 
@@ -58,95 +58,71 @@ export default function Play() {
 
 ## Why the lazy boundary matters
 
-The `babylonjs`, `babylonjs-toolkit`, etc. UMD bundles attach to `window` and
-reference `document` at import time. Any host that evaluates modules on the
+The `@babylonjs/core`, `@babylonjs-toolkit/next`, and related ES6 packages
+reference browser APIs (`window`, `document`, WebGL context) at module
+evaluation and engine-creation time. Any host that evaluates modules on the
 server (Node, Cloudflare Workers, edge runtimes) will crash on
 `window is not defined` if you import `system/babylon` from a route file's
-top-level imports. `mount.tsx` solves this for every host with one file.
+top-level imports. `mount.tsx` solves this for every host with one file by
+keeping all Babylon imports inside `React.lazy`, which only runs in the browser.
 
 ## Globals
 
-`src/babylon/globals.d.ts` ambient-declares the UMD globals (`BABYLON`,
-`TOOLKIT`, `HavokPhysics`, `PROJECT`) and the `globalThis` runtime-cache
-fields used by `globals.ts` (`HK`, `HKP`, `HAVOKPHYSCIS_JS`, `SCRIPTBUNDLE_JS`).
-Keeps the project clean under `strict: true` hosts.
+`src/babylon/project.d.ts` ambient-declares the runtime-only `globalThis`
+fields used by `globals.ts`: `HK`, `HKP`, `HavokPhysics`, `HAVOKPHYSICS_JS`,
+and `SCRIPTBUNDLE_JS`. These are populated at runtime by dynamic Havok
+initialisation and optional script-bundle loads — not by UMD global attachment.
+The old `BABYLON`, `TOOLKIT`, and `PROJECT` window globals are no longer used;
+all Babylon APIs are imported directly via the ES6 scoped packages
+(`@babylonjs/core`, `@babylonjs-toolkit/next`, etc.).
 
-## SSR host Vite config — Babylon UMD externals
+## SSR host Vite config — excluding `@babylonjs/*` from dep optimisation
 
-When mounting this UMD starter inside an SSR host (TanStack Start, Next.js
-with a custom Vite pipeline, Lovable, etc.), Vite's dep-optimization step
-runs esbuild over `babylonjs-inspector`, which contains UMD plugin sentinels
-like `require("babylonjs::BABYLON.Debug")` and
-`require("babylonjs-loaders::BABYLON.GLTF2")`. esbuild cannot resolve these
-and the dev server crashes with:
+When mounting this starter inside an SSR host (TanStack Start, Next.js with a
+custom Vite pipeline, Lovable, etc.), Vite's dep-optimisation step must **not**
+pre-bundle the `@babylonjs/*` and `@babylonjs-toolkit/*` packages. They ship
+pre-built ES modules; running esbuild over them serves no purpose and can cause
+the dev server to crash or produce a broken bundle.
 
-```
-✘ [ERROR] Could not resolve "babylonjs::BABYLON.Debug"
-```
-
-Fix: add a tiny esbuild plugin to `optimizeDeps` that marks any
-`<package>::…` specifier as external. At runtime those references are
-satisfied by the global `BABYLON` object that the UMD bundles already
-attached to `window`.
+Fix: add every Babylon scoped package to `optimizeDeps.exclude` in your host's
+`vite.config.ts`:
 
 ```ts
 // vite.config.ts (host project)
-const babylonUmdExternalsPlugin = {
-  name: "babylon-umd-externals",
-  setup(build: any) {
-    build.onResolve({ filter: /^babylonjs.*::/ }, (args: any) => ({
-      path: args.path,
-      external: true,
-    }));
-  },
-};
-
 export default defineConfig({
   optimizeDeps: {
-    exclude: ["babylonjs-inspector"],
-    esbuildOptions: { plugins: [babylonUmdExternalsPlugin] },
+    exclude: [
+      "@babylonjs/core",
+      "@babylonjs/loaders",
+      "@babylonjs/gui",
+      "@babylonjs/materials",
+      "@babylonjs/serializers",
+      "@babylonjs/addons",
+      "@babylonjs/havok",
+      "@babylonjs/inspector",
+      "@babylonjs-toolkit/next",
+      "@babylonjs-toolkit/next/project",
+    ],
   },
 });
 ```
 
 If your host wraps Vite (e.g. `@lovable.dev/vite-tanstack-config`), pass the
 same block through its `vite: { optimizeDeps: { ... } }` option. After
-adding the plugin, delete `node_modules/.vite` once so the dep cache is
+adding the exclusions, delete `node_modules/.vite` once so the dep cache is
 rebuilt.
 
-The shipped `vite.config.ts` in this starter already handles the same case
-via a Rolldown `resolveId`/`load` pair — the snippet above is only needed
-when a different host owns the Vite config.
+The shipped `vite.config.ts` in this starter already includes these exclusions.
 
 ---
 
-## Runtime fixes shipped in this revision
+## Runtime fix shipped in this revision
 
-Two bugs from the original starter caused the Play route to either crash
-on load or render a black screen in SSR hosts. Both are fixed in the
-shipped source — apply the same patches if you regenerate from an older
-clone.
+One bug from the original starter caused the Play route to render a black
+screen. It is fixed in the shipped source — apply the same patch if you
+regenerate from an older clone.
 
-### 1. Remove the `babylonjs-inspector` side-effect import
-
-`src/babylon/globals.ts` previously did:
-
-```ts
-import "babylonjs-inspector";
-```
-
-The inspector UMD bundle contains internal sentinels like
-`require("babylonjs::BABYLON.Debug")` that esbuild cannot resolve during
-Vite's `optimizeDeps` pass. The dev server starts, but the first dynamic
-import of the Babylon scene throws **"Failed to fetch dynamically
-imported module"** and the Play screen stays on the loading spinner.
-
-**Fix:** delete that import line. The inspector is a dev-only tool; load
-it on demand via `BABYLON.Tools.LoadScriptAsync` if you actually need it.
-Pair this with `optimizeDeps.exclude: ["babylonjs-inspector"]` (see the
-Vite config section above).
-
-### 2. Stabilize the default `engineOptions` in `system/viewer.tsx`
+### Stabilize the default `engineOptions` in `system/viewer.tsx`
 
 The component used to destructure with an inline default:
 
