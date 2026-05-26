@@ -19,7 +19,7 @@ function Home() {
      * Game code should use game manager, for example:
      * GameManager.NavigateTo("/play", {
      *     gameMode: "PlayerControllerDemo",
-     *     sceneUrl: GameManager.PlaygroundRepo + "samplescene.gltf",
+     *     sceneUrl: "https://repo.babylontoolkit.com/playground/samplescene.gltf",
      * });
      */
     navigate('/play', {
@@ -33,7 +33,7 @@ function Home() {
      * Game code should use game manager, for example:
      * GameManager.NavigateTo("/play", {
      *     gameMode: "VehicleControllerDemo",
-     *     sceneUrl: GameManager.PlaygroundRepo + "openterrain.gltf",
+     *     sceneUrl: "https://repo.babylontoolkit.com/playground/openterrain.gltf",
      * });
      */
     navigate('/play', {
@@ -74,9 +74,9 @@ function Home() {
           <p>Your questions, answered</p>
           <ul>
             <li>
-              <a href="https://babylontoolkit.github.io/agent/references/react-framework.md" target="_blank">
+              <a href="https://github.com/babylontoolkit/agent/blob/main/starthere.md" target="_blank">
                 <img className="logo" src={babylonLogo} alt="" />
-                Babylon Toolkit
+                Getting Started
               </a>
             </li>
             <li>
