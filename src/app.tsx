@@ -2,11 +2,11 @@ import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { DefaultBabylonPreloader, babylonLogo } from './babylon/custom/loading';
 import { useUnifiedNavigation } from "./babylon/system/platform";
+import { ReactRouterNavAdapter } from './routing/adpter';
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import './app.css'
-
 
 // Note: All babylon imports stay inside the PlayRoute lazy load chunk
 const PlayRoute = lazy(() => import('./routing/router'));
@@ -170,6 +170,7 @@ function Home() {
 function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
+     <ReactRouterNavAdapter>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/play" element={
@@ -178,6 +179,7 @@ function App() {
           </Suspense>
         } />
       </Routes>
+     </ReactRouterNavAdapter>
     </BrowserRouter>
   )
 }
