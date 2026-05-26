@@ -12,7 +12,7 @@
 
 import { createElement, ReactNode, useCallback, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { NavigationProvider, UnifiedNavigateFunction, LocationState, NavigationState } from "../babylon/system/platform";
+import { NavigationProvider, UnifiedNavigateFunction, LocationState, NavigationState, NAV_STATE_STORE_KEY } from "../babylon/system/platform";
 import GameManager from "../babylon/globals";
 
 export function ReactRouterNavAdapter({ children }: { children: ReactNode }) {
@@ -21,6 +21,13 @@ export function ReactRouterNavAdapter({ children }: { children: ReactNode }) {
 
   const navigate: UnifiedNavigateFunction = useCallback(
     (path, options) => {
+      // Bridge: persist fromApp state to sessionStorage so it survives iframe reloads.
+      // This is intentionally NOT in the URL — users cannot craft a shareable link
+      // with a spoofed gameMode/sceneUrl. sessionStorage is origin-scoped and
+      // session-scoped; modifying it only affects the user's own browser tab.
+      if (options?.state?.fromApp) {
+        try { sessionStorage.setItem(NAV_STATE_STORE_KEY, JSON.stringify(options.state)); } catch { /* ignore */ }
+      }
       rrNavigate(path, { state: options?.state, replace: options?.replace });
     },
     [rrNavigate]
