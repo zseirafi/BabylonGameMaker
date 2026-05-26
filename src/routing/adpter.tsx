@@ -20,15 +20,15 @@ export function ReactRouterNavAdapter({ children }: { children: ReactNode }) {
   const rrLocation = useLocation();
 
   const navigate: UnifiedNavigateFunction = useCallback(
-    (path, options) => {
-      // Bridge: persist fromApp state to sessionStorage so it survives iframe reloads.
+    (path, state) => {
+      // Bridge: persist state to sessionStorage so it survives iframe reloads.
       // This is intentionally NOT in the URL — users cannot craft a shareable link
       // with a spoofed gameMode/sceneUrl. sessionStorage is origin-scoped and
       // session-scoped; modifying it only affects the user's own browser tab.
-      if (options?.state?.fromApp) {
-        try { sessionStorage.setItem(NAV_STATE_STORE_KEY, JSON.stringify(options.state)); } catch { /* ignore */ }
+      if (state) {
+        try { sessionStorage.setItem(NAV_STATE_STORE_KEY, JSON.stringify(state)); } catch { /* ignore */ }
       }
-      rrNavigate(path, { state: options?.state, replace: options?.replace });
+      rrNavigate(path, { state });
     },
     [rrNavigate]
   );

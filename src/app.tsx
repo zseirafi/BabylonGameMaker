@@ -23,11 +23,8 @@ function Home() {
      * });
      */
     navigate('/play', {
-      state: {
-        fromApp: true,
-        gameMode: 'PlayerControllerDemo',
-        sceneUrl: 'https://repo.babylontoolkit.com/playground/samplescene.gltf',
-      },
+      gameMode: 'PlayerControllerDemo',
+      sceneUrl: 'https://repo.babylontoolkit.com/playground/samplescene.gltf',
     });
   };
   const handleVehicleDemo = () => {
@@ -40,11 +37,8 @@ function Home() {
      * });
      */
     navigate('/play', {
-      state: {
-        fromApp: true,
-        gameMode: 'VehicleControllerDemo',
-        sceneUrl: 'https://repo.babylontoolkit.com/playground/openterrain.gltf',
-      },
+      gameMode: 'VehicleControllerDemo',
+      sceneUrl: 'https://repo.babylontoolkit.com/playground/openterrain.gltf',
     });
   };
 
