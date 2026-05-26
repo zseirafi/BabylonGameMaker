@@ -7,13 +7,11 @@ import { ReactRouterNavAdapter } from "./adpter";
 export default function PlayRoute() {
   return (
     <ReactRouterNavAdapter>
-      <ApplicationRoute allowDevMode={true}>
-        <BabylonSceneViewer
-          fullPage={true}
-          allowQueryParams={true}
-          enableCustomOverlay={false}
-        />
-      </ApplicationRoute>
+      <BabylonSceneViewer
+        fullPage={true}
+        allowQueryParams={true}
+        enableCustomOverlay={false}
+      />
     </ReactRouterNavAdapter>
   );
 }
