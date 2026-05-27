@@ -22,12 +22,6 @@ function Home() {
   const handleVehicleDemo = () => {
     navigate('/play', {
       gameMode: 'VehicleControllerDemo',
-      sceneUrl: 'https://repo.babylontoolkit.com/playground/groundplane.gltf',
-    });
-  };
-  const handleTerrainDemo = () => {
-    navigate('/play', {
-      gameMode: 'DefaultCameraMode',
       sceneUrl: 'https://repo.babylontoolkit.com/playground/openterrain.gltf',
     });
   };
@@ -49,7 +43,7 @@ function Home() {
           <h1>React + Vite + BabylonJS</h1>
         </div>
         <div>
-          <button type="button" className="counter" onClick={handlePlayerDemo}>Player Demo</button>&nbsp;&nbsp;<button type="button" className="counter" onClick={handleVehicleDemo}>Vehicle Demo</button>&nbsp;&nbsp;<button type="button" className="counter" onClick={handleTerrainDemo}>Terrain Demo</button>
+          <button type="button" className="counter" onClick={handlePlayerDemo}>Player Demo</button>&nbsp;&nbsp;<button type="button" className="counter" onClick={handleVehicleDemo}>Vehicle Demo</button>
         </div>
       </section>
 
