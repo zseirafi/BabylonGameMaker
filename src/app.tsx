@@ -27,7 +27,7 @@ function Home() {
   };
   const handleTerrainDemo = () => {
     navigate('/play', {
-      gameMode: 'OpenTerrainDemo',
+      gameMode: 'DefaultCameraMode',
       sceneUrl: 'https://repo.babylontoolkit.com/playground/openterrain.gltf',
     });
   };
