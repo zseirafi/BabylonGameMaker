@@ -14,42 +14,18 @@ const PlayRoute = lazy(() => import('./routing/router'));
 function Home() {
   const { navigate } = useUnifiedNavigation();
   const handlePlayerDemo = () => {
-    /* Use Native Navigation API to prevent ANY BABYLON CODE from being included in the main bundle.
-     * This ensures that Babylon and all related dependencies are only loaded when the user clicks "Player Demo", optimizing initial load performance.
-     * Game code should use game manager, for example:
-     * GameManager.NavigateTo("/play", {
-     *     gameMode: "PlayerControllerDemo",
-     *     sceneUrl: "https://repo.babylontoolkit.com/playground/samplescene.gltf",
-     * });
-     */
     navigate('/play', {
       gameMode: 'PlayerControllerDemo',
       sceneUrl: 'https://repo.babylontoolkit.com/playground/samplescene.gltf',
     });
   };
   const handleVehicleDemo = () => {
-    /* Use Native Navigation API to prevent ANY BABYLON CODE from being included in the main bundle.
-     * This ensures that Babylon and all related dependencies are only loaded when the user clicks "Vehicle Demo", optimizing initial load performance.
-     * Game code should use game manager, for example:
-     * GameManager.NavigateTo("/play", {
-     *     gameMode: "VehicleControllerDemo",
-     *     sceneUrl: "https://repo.babylontoolkit.com/playground/groundplane.gltf",
-     * });
-     */
     navigate('/play', {
       gameMode: 'VehicleControllerDemo',
       sceneUrl: 'https://repo.babylontoolkit.com/playground/groundplane.gltf',
     });
   };
   const handleTerrainDemo = () => {
-    /* Use Native Navigation API to prevent ANY BABYLON CODE from being included in the main bundle.
-     * This ensures that Babylon and all related dependencies are only loaded when the user clicks "Terrain Demo", optimizing initial load performance.
-     * Game code should use game manager, for example:
-     * GameManager.NavigateTo("/play", {
-     *     gameMode: "OpenTerrainDemo",
-     *     sceneUrl: "https://repo.babylontoolkit.com/playground/openterrain.gltf",
-     * });
-     */
     navigate('/play', {
       gameMode: 'OpenTerrainDemo',
       sceneUrl: 'https://repo.babylontoolkit.com/playground/openterrain.gltf',
@@ -88,9 +64,9 @@ function Home() {
           <p>Your questions, answered</p>
           <ul>
             <li>
-              <a href="https://github.com/BabylonJS/BabylonToolkit" target="_blank">
+              <a href="https://www.babylontoolkit.com/documentation" target="_blank">
                 <img className="logo" src={babylonLogo} alt="" />
-                Babylon Toolkit
+                Getting Started
               </a>
             </li>
             <li>
