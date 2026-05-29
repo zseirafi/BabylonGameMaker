@@ -31,7 +31,7 @@ export function ReactRouterNavAdapter({ children }: { children: ReactNode }) {
         try { sessionStorage.setItem(NAV_STATE_STORE_KEY, JSON.stringify(storedState)); } catch { /* ignore */ }
         // Force a full DOM reload to release all resources from the previous page
         // and give the new scene a fresh slate.
-        if (reloadPage) {
+        if (reloadPage === undefined || reloadPage === true) {
           window.location.href = path;
           return;
         }
