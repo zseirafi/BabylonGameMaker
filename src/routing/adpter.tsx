@@ -26,7 +26,15 @@ export function ReactRouterNavAdapter({ children }: { children: ReactNode }) {
       // with a spoofed gameMode/sceneUrl. sessionStorage is origin-scoped and
       // session-scoped; modifying it only affects the user's own browser tab.
       if (state) {
-        try { sessionStorage.setItem(NAV_STATE_STORE_KEY, JSON.stringify(state)); } catch { /* ignore */ }
+        // Strip reload flag from stored state so it doesn't re-trigger on restore.
+        const { reloadPage, ...storedState } = state;
+        try { sessionStorage.setItem(NAV_STATE_STORE_KEY, JSON.stringify(storedState)); } catch { /* ignore */ }
+        // Force a full DOM reload to release all resources from the previous page
+        // and give the new scene a fresh slate.
+        if (reloadPage) {
+          window.location.href = path;
+          return;
+        }
       }
       rrNavigate(path, { state });
     },
