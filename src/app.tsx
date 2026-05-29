@@ -64,9 +64,9 @@ function Home() {
               </a>
             </li>
             <li>
-              <a href="https://vite.dev/" target="_blank">
+              <a href="https://babylontoolkit.github.io/repo" target="_blank">
                 <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
+                Asset Library
               </a>
             </li>
             <li>
