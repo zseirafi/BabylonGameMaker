@@ -121,6 +121,7 @@ export default defineConfig(({ mode }) => ({
       "use-sync-external-store/shim"
     ] : [],
   },
+  assetsInclude: ["**/*.wasm"],  
   server: {
     headers: {
       "Cross-Origin-Embedder-Policy": "credentialless",
