@@ -75,6 +75,11 @@ export default defineConfig(({ mode }) => ({
   build: {
     emptyOutDir: true,
     copyPublicDir: true,
+    // No module-preload helper: the generated __vitePreload helper is a module
+    // shared by every chunk with dynamic imports, and rolldown emits it into
+    // the babylon chunk — forcing the eager landing/auth entry to statically
+    // import 10MB of Babylon. Plain import() keeps the graphs fully separate.
+    modulePreload: false,
     minify: "esbuild",
     target: "esnext",
     sourcemap: false,
@@ -83,11 +88,22 @@ export default defineConfig(({ mode }) => ({
         entryFileNames: "[name].js",
         assetFileNames: "[name].[ext]",
         inlineDynamicImports: false,
-        manualChunks(id) {
-          // IMPORTANT: Keep all Babylon code in one chunk to ensure the library files are correctly referenced 
-          if (id.includes("babylonjs")) {
-            return "babylon";
-          }
+        // IMPORTANT: Keep all Babylon code in one chunk to ensure the library
+        // files are correctly referenced. Remaining third-party code (react,
+        // react-router, ...) gets its own vendor chunk so shared modules and
+        // vite runtime helpers are never emitted into the babylon chunk —
+        // otherwise the eager landing/auth entry would statically import the
+        // 10MB babylon chunk just to reach a shared helper.
+        advancedChunks: {
+          groups: [
+            // Vite's injected preload helper ("\0vite/preload-helper.js") is used
+            // by every chunk with dynamic imports. Isolate it in its own tiny
+            // eager chunk so it is never emitted into the babylon chunk (which
+            // would force the landing/auth entry to import 10MB of Babylon).
+            { name: "preload-helper", test: /preload-helper/ },
+            { name: "babylon", test: /babylonjs/ },
+            { name: "vendor", test: /node_modules/ },
+          ],
         },
       }
     }

@@ -13,7 +13,6 @@
 import { createElement, ReactNode, useCallback, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { NavigationProvider, UnifiedNavigateFunction, LocationState, NavigationState, NAV_STATE_STORE_KEY } from "../babylon/system/platform";
-import GameManager from "../babylon/globals";
 
 export function ReactRouterNavAdapter({ children }: { children: ReactNode }) {
   const rrNavigate = useNavigate();
@@ -41,13 +40,26 @@ export function ReactRouterNavAdapter({ children }: { children: ReactNode }) {
     [rrNavigate]
   );
 
-  // Note: Register the navigation hook globally so GameManager.NavigateTo works on
-  // every page, even before the Babylon runtime has initialized. ReactRouterNavAdapter
-  // wraps the whole app (inside BrowserRouter) and already owns the navigate function.
+  // Note: Register the navigation hook on the game manager so GameManager.NavigateTo
+  // works from game code. GameManager is imported lazily and only on the /play route:
+  // a static (or unconditional dynamic) import would download the entire Babylon
+  // runtime chunk on the landing/auth pages (globals.ts imports @babylonjs/*), and
+  // GameManager.NavigateTo is only ever called by game code, which exists only on
+  // /play — where the Babylon chunk is already loading.
+  const isPlayRoute = rrLocation.pathname.startsWith("/play");
   useEffect(() => {
-    GameManager.SetReactNavigationHook(navigate);
-    return () => GameManager.DeleteReactNavigationHook();
-  }, [navigate]);
+    if (!isPlayRoute) return;
+    let disposed = false;
+    void import("../babylon/globals").then(({ default: GameManager }) => {
+      if (!disposed) GameManager.SetReactNavigationHook(navigate);
+    });
+    return () => {
+      disposed = true;
+      void import("../babylon/globals").then(({ default: GameManager }) => {
+        GameManager.DeleteReactNavigationHook();
+      });
+    };
+  }, [navigate, isPlayRoute]);
 
   const location: LocationState = useMemo(
     () => ({
