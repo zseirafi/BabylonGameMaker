@@ -29,7 +29,7 @@ const AGENT_SKILLS = [
 
 // Step 2 — the clone prompt. Pull the starter repo into the project.
 const CLONE_PROMPT =
-  "Clone the starter repo from https://github.com/zseirafi/BabylonGameMaker and open a live preview.";
+  "Clone the starter repo from https://github.com/codewrxai/BabylonGameMaker and open a live preview.";
 
 // Step 3 — the build prompt. Tells the agent to assemble a racing game from the assets that
 // ship with this project (the sports car + race track), so it aligns with the asset library.
@@ -245,7 +245,7 @@ function Home() {
 
       {/* ---------- Footer ---------- */}
       <footer className="gm-footer">
-        <a href="https://github.com/zseirafi/BabylonGameMaker" target="_blank" rel="noreferrer">GitHub</a>
+        <a href="https://github.com/codewrxai/BabylonGameMaker" target="_blank" rel="noreferrer">GitHub</a>
         <a href="https://www.babylontoolkit.com/documentation" target="_blank" rel="noreferrer">Docs</a>
         <a href="https://www.babylontoolkit.com" target="_blank" rel="noreferrer">Babylon Toolkit</a>
         <span className="gm-powered">Powered by Babylon.js</span>
