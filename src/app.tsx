@@ -130,11 +130,11 @@ function Home() {
           <div className="gm-step">
             <div className="gm-step-head">
               <span className="gm-num">1</span>
-              <span className="gm-step-label">Set up the Babylon Toolkit agent in your project</span>
+              <span className="gm-step-label">Set up the Babylon Toolkit agent in your workspace — before cloning</span>
             </div>
             <div className="gm-step-boxes">
               <div>
-                <p className="gm-box-cap">Add to your project's Knowledge / custom instructions</p>
+                <p className="gm-box-cap">Add to your Workspace Knowledge</p>
                 <div className="gm-prompt">
                   <code ref={personaRef} className="gm-prompt-text gm-prompt-scroll" onClick={() => selectText(personaRef.current)}>{AGENT_PERSONA}</code>
                   <button type="button" className="gm-btn gm-btn-primary" onClick={() => copy(AGENT_PERSONA, 'persona', personaRef.current)}>
@@ -144,7 +144,7 @@ function Home() {
                 <Shot src="/lovable-knowledge.jpg" caption="Example — Lovable Settings: Knowledge" />
               </div>
               <div>
-                <p className="gm-box-cap">Add these Skills — Import from GitHub (one at a time)</p>
+                <p className="gm-box-cap">Add to your Workspace Skills — Import from GitHub (one at a time)</p>
                 <div className="gm-skills-list">
                   {AGENT_SKILLS.map((url, i) => (
                     <div className="gm-skill" key={url}>
